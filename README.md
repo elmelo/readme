@@ -19,10 +19,11 @@ Antes de que podamos programar la parte funcional del juego, necesitamos crear l
 // En este caso hemos definido el tamaño del lienzo "canvas" con un ancho de 480 px y un alto de 320, pero se puede ajustar al tamaño que requiera.
 
 <script>
+// El codigo en JavaScript va a ir aqui, ya que canvas es solo el lienzo quien dibuja es javascript por lo que es necesario llamar al elemento canvas desde el script y definir en este caso el contexto 2d.
+
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
-  
-// El codigo en JavaScript va a ir aqui, ya que canvas es solo el lienzo quien dibuja es javascript por lo que es necesario llamar al elemento canvas desde el script y definir en este caso el contexto 2d.
+    
 
 </script>
 
@@ -36,7 +37,7 @@ Ahora vamos a dibujar una pelota y a hacer que se mueva. Técnicamente, estaremo
     var canvas = document.getElementById("myCanvas");
     var ctx = canvas.getContext("2d");
   
-    // A continuacion se definen las variables de la pelota, las variables "x" "y" define donde estara el centro de la pelota y "dx"    "dy" definen la magnitud y direccion del movimiento.
+    // A continuacion se definen las variables de la pelota, las variables "x" "y" define donde estara el centro de la pelota y "dx"        "dy" definen la magnitud y direccion del movimiento.
   
     var x = canvas.width/2;
     var y = canvas.height-30;
@@ -53,7 +54,7 @@ Ahora vamos a dibujar una pelota y a hacer que se mueva. Técnicamente, estaremo
         ctx.closePath();
     }
     
-    // Ahora vamos ha hacer que se dibuje cada 10 milisegundos pero que antes de esto nos limpie el lienzo con el objetivo de crear la animacion, ya que de lo contrario solo trazara una linea con el grosor del radio del circulo.
+    // Ahora vamos ha hacer que se dibuje cada 10 milisegundos pero que antes de esto nos limpie el lienzo con el objetivo de crear la      animacion, ya que de lo contrario solo trazara una linea con el grosor del radio del circulo.
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -102,6 +103,89 @@ Continuando con el desarrollo crearemos una funcion para detectar la colisión d
 </script>
 
 ## LECCION 4
+En este punto vamos a crear una paleta con la que el usuario podra interactuar con la bola.
+
+<script>
+    var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext("2d");
+    var ballRadius = 10;
+    var x = canvas.width/2;
+    var y = canvas.height-30;
+    var dx = 2;
+    var dy = -2;
+    
+    //A continuacion se definen las variables de la paleta, paddleHeight y paddleWidth son las dimenciones ancho alto de la paleta y         paddleX define el lugar donde se va a dibujar en el eje x.
+    
+    var paddleHeight = 10;
+    var paddleWidth = 75;
+    var paddleX = (canvas.width-paddleWidth)/2;
+    
+    //Las variables rightPressed y leftPressed guardan informacion cuando se ha pulsado un botón, añadiremos tambien dos eventos para       detectar cuando se ha pulsado un botón y que asi cambie los valores de las variables rightPressed y leftPressed segun sea el caso.
+    
+    var rightPressed = false;
+    var leftPressed = false;
+    document.addEventListener("keydown", keyDownHandler, false);
+    document.addEventListener("keyup", keyUpHandler, false);
+    
+    
+    function keyDownHandler(e) {
+        if(e.keyCode == 39) {
+            rightPressed = true;
+        }
+        else if(e.keyCode == 37) {
+            leftPressed = true;
+        }
+    }
+    function keyUpHandler(e) {
+        if(e.keyCode == 39) {
+            rightPressed = false;
+        }
+        else if(e.keyCode == 37) {
+            leftPressed = false;
+        }
+    }
+    function drawBall() {
+        ctx.beginPath();
+        ctx.arc(x, y, ballRadius, 0, Math.PI*2);
+        ctx.fillStyle = "#0095DD";
+        ctx.fill();
+        ctx.closePath();
+    }
+    
+    // Esta es la parte del codigo que define la funcion "drawPaddle" la cual dibuja la paleta, esta funcion esta conpuesta por cuatro      argumentos, las dos primeras variables son las coordenadas de la esquina superior izquierda del rectangulo, el tercero es el ancho y    el cuarto el alto.
+    
+    function drawPaddle() {
+        ctx.beginPath();
+        ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
+        ctx.fillStyle = "#0095DD";
+        ctx.fill();
+        ctx.closePath();
+    }
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawBall();
+        drawPaddle();
+        if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
+            dx = -dx;
+        }
+        if(y + dy > canvas.height-ballRadius || y + dy < ballRadius) {
+            dy = -dy;
+        }
+        
+        // Aqui es donde modificamos la función draw para comprobar si está pulsada la flecha izquierda o la derecha cada vez que se            dibuje un fotograma.
+        
+        if(rightPressed && paddleX < canvas.width-paddleWidth) {
+            paddleX += 7;
+        }
+        else if(leftPressed && paddleX > 0) {
+            paddleX -= 7;
+        }
+        
+        x += dx;
+        y += dy;
+    }
+    setInterval(draw, 10);
+</script>
 
 ## LECCION 5
 <!DOCTYPE html>
